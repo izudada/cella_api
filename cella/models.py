@@ -1,4 +1,4 @@
-import uuid
+import uuid as my_uuid
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
@@ -8,48 +8,7 @@ from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .manager import CustomUserManager
-
-
-
-class User(AbstractBaseUser, PermissionsMixin):
-    pkid = models.BigAutoField(primary_key=True, editable=False)
-    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    username = models.CharField(verbose_name=_("Username"), max_length=255, unique=True)
-    first_name = models.CharField(verbose_name=_("First Name"), max_length=50)
-    last_name = models.CharField(verbose_name=_("Last Name"), max_length=50)
-    email = models.EmailField(verbose_name=_("Email Address"), unique=True)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now)
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
-
-    objects = CustomUserManager()
-
-    class Meta:
-        verbose_name = _("User")
-        verbose_name_plural = _("Users")
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def get_full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
-    def get_short_name(self):
-        return self.username
-
-
-class TimeStampedUUIDModel(models.Model):
-    pkid = models.BigAutoField(primary_key=True, editable=False)
-    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
+from datetime import datetime
 
 
 class Gender(models.TextChoices):
@@ -58,8 +17,24 @@ class Gender(models.TextChoices):
     OTHER = "Other", _("Other")
 
 
-class Profile(TimeStampedUUIDModel):
-    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
+class TimeStampedUUIDModel(models.Model):
+    pkid = models.UUIDField(primary_key=True, editable=False, default="000000")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class User(AbstractBaseUser, PermissionsMixin, TimeStampedUUIDModel):
+    pkid = models.BigAutoField(primary_key=True, editable=False)
+    id = models.UUIDField(default=my_uuid.uuid4, editable=False, unique=True)
+    username = models.CharField(verbose_name=_("Username"), max_length=255, unique=True)
+    first_name = models.CharField(verbose_name=_("First Name"), max_length=50)
+    last_name = models.CharField(verbose_name=_("Last Name"), max_length=50)
+    email = models.EmailField(verbose_name=_("Email Address"), unique=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     phone_number = PhoneNumberField(
         verbose_name=_("Phone Number"), max_length=30, default="+2348131234568"
     )
@@ -85,5 +60,53 @@ class Profile(TimeStampedUUIDModel):
     is_verified = models.BooleanField( default=False )
     nin = models.CharField(max_length=30, default="222333444555" )
 
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+
+    objects = CustomUserManager()
+
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+
     def __str__(self):
-        return f"{self.user.username}'s profile"
+        return self.username
+
+    @property
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def get_short_name(self):
+        return self.username
+
+
+class Categories(models.Model):
+    name = models.CharField(max_length=50)
+    quantity = models.IntegerField(default=1)
+    price_ht = models.FloatField(blank=True)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+
+
+class Product(TimeStampedUUIDModel, models.Model):
+    name = models.CharField(max_length=50)
+    quantity = models.IntegerField(default=1)
+    price = models.FloatField(blank=True)
+    profile_photo = models.ImageField(
+        verbose_name=_("Profile Photo"), default="/profile_default.png"
+    )
+
+class Cart(TimeStampedUUIDModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class CartItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    price = models.FloatField(blank=True)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+
+
+    def price_ttc(self):
+        return self.price_ht 
+
+    def __str__(self):
+        return  self.client + " - " + self.product
