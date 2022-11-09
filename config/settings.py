@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import environ
+from datetime import timedelta
 
 # Initialise environment variables
 env = environ.Env()
@@ -47,12 +48,11 @@ INSTALLED_APPS = [
     "django.contrib.sites",
 
     "rest_framework",
+    'knox',
+
     "django_filters",
     "django_countries",
     "phonenumber_field",
-    "djoser",
-    "rest_framework_simplejwt",
-    "djcelery_email",
 
     'cella',
 ]
@@ -153,3 +153,16 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'cella.User'
+
+
+#   Email Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = "info@cella.com"
+DOMAIN = env('DOMAIN')
