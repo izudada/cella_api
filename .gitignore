@@ -3,3 +3,9 @@ env/
 .env
 
 config/__pycache__/
+
+cella/__pycache__/
+
+cella/migrations/__pycache__/
+
+db.sqlite3
