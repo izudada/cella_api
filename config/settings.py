@@ -62,11 +62,13 @@ INSTALLED_APPS = [
     'cella',
 ]
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',  # for localhost (REACT Default)
-     'http://127.0.0.1:3000', 
-    'cella.vercel.app',
-)
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = (
+#     'http://localhost:3000',  # for localhost (REACT Default)
+#      'http://127.0.0.1:3000', 
+#     'cella.vercel.app',
+# )
 
 AUTH_USER_MODEL = 'cella.User'
 
@@ -81,7 +83,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
