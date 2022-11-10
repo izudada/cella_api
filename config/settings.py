@@ -36,7 +36,7 @@ DEBUG = env('DEBUG')
 USER_ID = env('USER_ID')
 API_KEY = env('API_KEY')
 
-ALLOWED_HOSTS = ['cella-api.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
