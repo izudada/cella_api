@@ -80,5 +80,7 @@ def login_user(request):
 
 
 
-# @api_view(["GET"])
-# @permission_classes([AllowAny])
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def say_hello(request):
+    return Response({"message": "Hello World"})
