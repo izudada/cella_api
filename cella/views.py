@@ -17,7 +17,13 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 
 
-User = get_user_model()
+
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User  
+
 
 @api_view(['POST',])
 @permission_classes(())
