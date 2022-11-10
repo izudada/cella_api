@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .models import Brand, Product
+from .models import Brand, Product, Order, Item
 from rest_framework.authtoken.models import Token
 
 
@@ -40,53 +40,66 @@ def verify_user(request):
     return Response(status=status.HTTP_404_NOT_FOUND, data=message)
 
 
-# Register API
-class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+# Register API/Checkout
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def checkout(request):
+    try:
+        data = {}
+        user_data = {}
+        response = request.data
+        user_data['email'] = response['email']
+        user_data['first_name'] = response['firstName']
+        user_data['last_name'] = response['lastName']
+        user_data['state'] = response['state']
+        user_data['password'] = response['password']
+        user_data['password2'] = response['password2']
+        user_data['username'] = response['username']
+        user_data['nin'] = response['nin']
+        serializer = RegisterSerializer(data=user_data)
+        if serializer.is_valid():
+            account = serializer.save()
+            account.is_active = True
+            account.is_verified = True
+            account.save()
+            token = Token.objects.get_or_create(user=account)
+            data["message"] = "user registered successfully"
+            data["email"] = account.email
+            data["username"] = account.username
+            data["token"] = token[0].key
+            data['first_name'] = account.first_name
+            data['last_name'] = account.last_name
+            data['state'] = account.state
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response({
-        "user": RegisterSerializer(user, context=self.get_serializer_context()).data,
-        "token": Token.objects.get_or_create(user=user)[0][1]
-        })
+            total = 0
+            for i in request.data['products']:
+                total += i['price'] * i['quantity']
+                
+            new_order = Order.objects.create(
+                user=account, 
+                ref=response['reference'],
+                total= total
+            )
+            new_order.save()
 
+            for i in request.data['products']:
+                new_item = Item.objects.create(
+                    order=new_order,
+                    title = i['title'],
+                    image = i['image'],
+                    quantity = i['quantity']
+                )
+                new_item.save()
 
-# @api_view(["POST"])
-# @permission_classes([AllowAny])
-# def login_user(request):
+        else:
+            data = serializer.errors
 
-#         data = {}
-#         body = json.loads(request.body)
-#         email = body['email']
-#         password = body['password']
-#         try:
-
-#             account = User.objects.get(email=email)
-#         except BaseException as e:
-#             raise ValidationError({"400": f'{str(e)}'})
-
-#         token = Token.objects.get_or_create(user=account)[0].digest
-#         if not check_password(password, account.password):
-#             raise ValidationError({"message": "Incorrect Login credentials"})
-
-#         if account:
-#             if account.is_active:
-#                 login(request, account)
-#                 data["message"] = "user logged in"
-#                 data["email_address"] = account.email
-
-#                 Res = {"data": data, "token": token}
-
-#                 return Response(Res)
-
-        #     else:
-        #         raise ValidationError({"400": f'Account not active'})
-
-        # else:
-        #     raise ValidationError({"400": f'Account doesnt exist'})
+        print(data)     
+        return Response(data)
+    except Exception as e:
+        print(e)
+        message = {"message": "issue creating checkout"}
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
 
 @api_view(["POST"])
 @permission_classes([AllowAny])

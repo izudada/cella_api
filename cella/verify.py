@@ -8,8 +8,8 @@ def verify_id(nin):
 
     headers = {
         'Content-type': 'application/json', 
-        "userid" : settings.USER_ID,
-        "apiKey": settings.API_KEY
+        "userid" : '1667948304746',
+        "apiKey": 'DTHswgJl1K3roPN5FeVp'
     } 
 
     body = {
@@ -20,5 +20,4 @@ def verify_id(nin):
 
     data = response.json()
     return data
-
-# print(verify_id("02730846093"))
+    

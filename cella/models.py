@@ -12,6 +12,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(verbose_name=_("Username"), max_length=255, unique=True)
+    state = models.CharField(verbose_name=_("State"), max_length=55, default="Lagos")
     first_name = models.CharField(verbose_name=_("First Name"), max_length=50)
     last_name = models.CharField(verbose_name=_("Last Name"), max_length=50)
     email = models.EmailField(verbose_name=_("Email Address"), unique=True)
@@ -39,6 +40,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.username
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ref = models.CharField(default="scotch", max_length=100)
+    total = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(blank=True, null=True)  
+
+    def get_short_name(self):
+        return self.ref
+
+
+class Item(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    title = models.CharField(default="scotch", max_length=50)
+    image = models.ImageField()
+    quantity = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(blank=True, null=True)  
+
+    def get_short_name(self):
+        return self.title
 
 
 class Brand(models.Model):

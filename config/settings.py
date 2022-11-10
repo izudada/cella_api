@@ -52,12 +52,12 @@ INSTALLED_APPS = [
 
 
     "django.contrib.sites",
-    'knox',
 
     "django_filters",
     "django_countries",
     "phonenumber_field",
     "rest_framework",
+    "rest_framework.authtoken",
     'corsheaders',
     'cella',
 ]
@@ -83,10 +83,8 @@ MIDDLEWARE = [
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
+      'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
