@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django_countries.serializer_fields import CountryField
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
-from .models import Product
 
 User = get_user_model()
 
@@ -46,8 +45,3 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email')
 
-
-class CartItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['product', 'quantity', 'price']

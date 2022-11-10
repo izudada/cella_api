@@ -1,9 +1,11 @@
+
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import User, TimeStampedUUIDModel
+from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
@@ -62,7 +64,7 @@ class UserAdmin(BaseUserAdmin):
                 )
             },
         ),
-        (_("Important Dates"), {"fields": ("last_login",)}),
+        (_("Important Dates"), {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
         (
@@ -76,4 +78,4 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ["email", "username", "first_name", "last_name"]
 
 
-admin.site.register(User)
+admin.site.register(User, UserAdmin)

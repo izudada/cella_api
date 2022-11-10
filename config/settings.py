@@ -14,6 +14,7 @@ from pathlib import Path
 import environ
 from datetime import timedelta
 import socket
+import dj_database_url
 
 # Initialise environment variables
 env = environ.Env()
@@ -21,6 +22,9 @@ environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Quick-start development settings - unsuitable for production
@@ -57,9 +61,12 @@ INSTALLED_APPS = [
     "django_filters",
     "django_countries",
     "phonenumber_field",
+     'whitenoise.runserver_nostatic',
 
     'cella',
 ]
+
+AUTH_USER_MODEL = 'cella.User'
 
 SITE_ID = 1
 
@@ -117,6 +124,13 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -155,6 +169,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
