@@ -51,24 +51,19 @@ INSTALLED_APPS = [
 
 
     "django.contrib.sites",
-
-    "rest_framework",
     'knox',
 
     "django_filters",
     "django_countries",
     "phonenumber_field",
+    "rest_framework",
     'corsheaders',
     'cella',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:3000',  # for localhost (REACT Default)
-#      'http://127.0.0.1:3000', 
-#     'cella.vercel.app',
-# )
+
 
 AUTH_USER_MODEL = 'cella.User'
 
@@ -77,13 +72,13 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 

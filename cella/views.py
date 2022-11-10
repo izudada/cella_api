@@ -29,7 +29,7 @@ except ImportError:
 
 
 @api_view(['POST',])
-@permission_classes([AllowAny])
+@permission_classes([])
 def verify_user(request):
     nin = request.data['nin']
     user_data = verify_id(str(nin))
