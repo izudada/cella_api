@@ -39,3 +39,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.username
+
+
+class Brand(models.Model):
+    name = models.CharField(default="scotch", max_length="50")
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(blank=True, null=True)  
+
+
+class Products(models.Model):
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
+    name = models.CharField(default="name", max_length="50")
+    price = models.IntegerField(default=0)
+    sold = models.IntegerField(default=0)
+    in_stock = models.IntegerField(default=0)
+    total = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(blank=True, null=True)  
