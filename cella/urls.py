@@ -10,4 +10,5 @@ urlpatterns = [
 
 
     path('brands', views.BrandApiListView.as_view(), name="brands"),
+    path('products', views.ProductApiListView.as_view(), name="products"),
 ]

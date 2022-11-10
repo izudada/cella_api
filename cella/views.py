@@ -102,3 +102,14 @@ class BrandApiListView(generics.ListAPIView):
     # authentication_classes = (AllowAny,)
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
+
+
+class ProductApiListView(generics.ListAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = Product
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (AllowAny,)
+    pagination_class = PageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('brand__name', 'name', 'description', 'price',)
