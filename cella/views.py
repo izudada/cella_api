@@ -107,7 +107,7 @@ class BrandApiListView(generics.ListAPIView):
 class ProductApiListView(generics.ListAPIView):
 
     queryset = Product.objects.all()
-    serializer_class = Product
+    serializer_class = ProductSerializer
     # authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
     pagination_class = PageNumberPagination
