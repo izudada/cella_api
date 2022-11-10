@@ -58,9 +58,15 @@ INSTALLED_APPS = [
     "django_filters",
     "django_countries",
     "phonenumber_field",
-
+    'corsheaders',
     'cella',
 ]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',  # for localhost (REACT Default)
+     'http://127.0.0.1:3000', 
+    'cella.vercel.app',
+)
 
 AUTH_USER_MODEL = 'cella.User'
 
