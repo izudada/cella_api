@@ -26,14 +26,15 @@ except ImportError:
 
 
 @api_view(['POST',])
-@permission_classes(())
+@permission_classes([AllowAny])
 def verify_user(request):
     nin = request.data['nin']
     user_data = verify_id(str(nin))
+    print(user_data)
     if user_data["transactionStatus"] == "SUCCESSFUL":
         result = json.dumps(user_data["response"])
         return Response(result)
-    return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(status=status.HTTP_404_NOT_FOUND, data=user_data["description"])
 
 
 # Register API
