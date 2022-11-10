@@ -47,7 +47,7 @@ class Brand(models.Model):
     edited_at = models.DateTimeField(blank=True, null=True)  
 
 
-class Products(models.Model):
+class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     name = models.CharField(default="name", max_length=50)
     price = models.IntegerField(default=0)
