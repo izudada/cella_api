@@ -78,3 +78,7 @@ def login_user(request):
         else:
             raise ValidationError({"400": f'Account doesnt exist'})
 
+
+
+# @api_view(["GET"])
+# @permission_classes([AllowAny])

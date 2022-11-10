@@ -27,7 +27,7 @@ class TimeStampedUUIDModel(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.BigAutoField(primary_key=True, editable=False)
+    id = models.BigIntegerField(primary_key=True, editable=False)
     pkid = models.UUIDField(default=my_uuid.uuid4, editable=False, unique=True)
     username = models.CharField(verbose_name=_("Username"), max_length=255, unique=True)
     first_name = models.CharField(verbose_name=_("First Name"), max_length=50)
