@@ -26,9 +26,9 @@ class TimeStampedUUIDModel(models.Model):
         abstract = True
 
 
-class User(AbstractBaseUser, PermissionsMixin, TimeStampedUUIDModel):
-    pkid = models.BigAutoField(primary_key=True, editable=False)
-    id = models.UUIDField(default=my_uuid.uuid4, editable=False, unique=True)
+class User(AbstractBaseUser, PermissionsMixin):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    pkid = models.UUIDField(default=my_uuid.uuid4, editable=False, unique=True)
     username = models.CharField(verbose_name=_("Username"), max_length=255, unique=True)
     first_name = models.CharField(verbose_name=_("First Name"), max_length=50)
     last_name = models.CharField(verbose_name=_("Last Name"), max_length=50)
@@ -59,6 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedUUIDModel):
     )
     is_verified = models.BooleanField( default=False )
     nin = models.CharField(max_length=30, default="222333444555" )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    pkid = models.UUIDField(default=my_uuid.uuid4, editable=False, unique=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username", "first_name", "last_name"]
