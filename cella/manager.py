@@ -5,69 +5,54 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CustomUserManager(BaseUserManager):
-    def email_validator(self, email):
-        try:
-            validate_email(email)
-        except ValidationError:
-            raise ValueError(_("You must provide a valid email address"))
-
-    def create_user(
-        self, username, first_name, last_name, email, password, **extra_fields
-    ):
+    def _create_user(self, username, email, password, **extra_fields):
+        """
+            Create and save a user with the given username, email, and password.
+        """
         if not username:
-            raise ValueError(_("Users must submit a username"))
+            raise ValueError('The given username must be set')
+        if not email:
+            raise ValueError('The given email must be set')
 
-        if not first_name:
-            raise ValueError(_("Users must submit a first name"))
-
-        if not last_name:
-            raise ValueError(_("Users must submit a last name"))
-
-        if email:
-            email = self.normalize_email(email)
-            self.email_validator(email)
-        else:
-            raise ValueError(_("Base User Account: An email address is required"))
-
-        user = self.model(
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            **extra_fields
-        )
-
+        email = self.normalize_email(email)
+        # Lookup the real model class from the global app registry so this
+        # manager method can be used in migrations. This is fine because
+        # managers are by definition working on the real model.
+        # GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
+        # username = GlobalUserModel.normalize_username(username)
+        username = self.model.normalize_username(username)
+        user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
-        extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_superuser", False)
         user.save(using=self._db)
         return user
 
-    def create_superuser(
-        self, username, first_name, last_name, email, password, **extra_fields
-    ):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
+    def create_user(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, email, password, **extra_fields)
+    
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError(_("Superusers must have is_staff=True"))
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
 
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError(_("Superusers must have is_superuser=True"))
+        return self._create_user(username, email, password, **extra_fields)
 
-        if not password:
-            raise ValueError(_("Superusers must have a password"))
 
-        if email:
-            email = self.normalize_email(email)
-            self.email_validator(email)
-        else:
-            raise ValueError(_("Admin Account: An email address is required"))
+class TrackingModel(models.Model):
+    
+    """
+        Most of the models have have these two fields below as recurrent fields, 
+        so to maintain a dry code it is wise to separate them this way.
+    """
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-        user = self.create_user(
-            username, first_name, last_name, email, password, **extra_fields
-        )
-        user.save(using=self._db)
-        return user
-        
+
+    class Meta:
+        abstract = True
+        ordering = ('-created_at',)
