@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from knox.models import AuthToken
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import RegisterSerializer, UserSerializer, BrandSerializer, ProductSerializer
 from .verify import verify_id
 import json
 import uuid as my_uuid
@@ -15,6 +15,9 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.filters import SearchFilter, OrderingFilter
+from .models import Brand, Product
 
 
 
@@ -91,3 +94,11 @@ def login_user(request):
 @permission_classes([AllowAny])
 def say_hello(request):
     return Response({"message": "Hello World"})
+
+
+class BrandApiListView(generics.ListAPIView):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+    # authentication_classes = (AllowAny,)
+    permission_classes = (AllowAny,)
+    pagination_class = PageNumberPagination
