@@ -126,12 +126,11 @@ def login_user(request):
 
         data = {}
         reqBody = json.loads(request.body)
-        email1 = reqBody['Email_Address']
-        print(email1)
+        email1 = reqBody['email']
         password = reqBody['password']
         try:
 
-            Account = User.objects.get(Email_Address=email1)
+            Account = User.objects.get(email=email1)
         except BaseException as e:
             raise ValidationError({"400": f'{str(e)}'})
 
