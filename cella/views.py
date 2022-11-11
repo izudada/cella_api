@@ -70,31 +70,40 @@ def checkout(request):
             data['first_name'] = account.first_name
             data['last_name'] = account.last_name
             data['state'] = account.state
-
-            total = 0
-            for i in request.data['products']:
-                total += i['price'] * i['quantity']
-                
-            new_order = Order.objects.create(
-                user=account, 
-                ref=response['reference'],
-                total= total
-            )
-            new_order.save()
-
-            for i in request.data['products']:
-                new_item = Item.objects.create(
-                    order=new_order,
-                    title = i['title'],
-                    image = i['image'],
-                    quantity = i['quantity']
+            
+            try:
+                total = 0
+                for i in request.data['products']:
+                    total += i['price'] * i['quantity']
+                    
+                new_order = Order.objects.create(
+                    user=account, 
+                    ref= request.data['reference'],
+                    total= total
                 )
-                new_item.save()
+                new_order.save()
+            except Exception as e:
+                print(e)
+                message = {"message": "issue creating order for checkout"}
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
+
+            try:
+                for i in request.data['products']:
+                    new_item = Item.objects.create(
+                        order=new_order,
+                        title = i['title'],
+                        image = i['image'],
+                        quantity = i['quantity']
+                    )
+                    new_item.save()
+            except Exception as e:
+                print(e)
+                message = {"message": "issue creating items for checkout"}
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
 
         else:
             data = serializer.errors
-
-        print(data)     
+   
         return Response(data)
     except Exception as e:
         print(e)

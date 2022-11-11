@@ -44,12 +44,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ref = models.CharField(default="scotch", max_length=500)
+    ref = models.CharField(default="scotch", max_length=50)
     total = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(blank=True, null=True)  
 
-    def get_short_name(self):
+    def __str__(self):
         return self.ref
 
 
@@ -61,7 +61,7 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(blank=True, null=True)  
 
-    def get_short_name(self):
+    def __str__(self):
         return self.title
 
 
