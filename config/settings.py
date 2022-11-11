@@ -126,7 +126,7 @@ DATABASES = {
         'USER': env('DATABASE_USERNAME'),
         'PASSWORD': env('DATABASE_PASSWORD'),
     }
-} 
+}
 
 # DATABASES = {
 #     'default': {

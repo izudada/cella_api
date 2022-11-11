@@ -47,20 +47,20 @@ def checkout(request):
     try:
         data = {}
         user_data = {}
-        response = request.data
-        user_data['email'] = response['email']
-        user_data['first_name'] = response['firstName']
-        user_data['last_name'] = response['lastName']
-        user_data['state'] = response['state']
-        user_data['password'] = response['password']
-        user_data['password2'] = response['password2']
-        user_data['username'] = response['username']
-        user_data['nin'] = response['nin']
+        print(request.data['firstName'])
+        print(request.data['lastName'])
+        user_data['email'] = request.data['email']
+        user_data['first_name'] = request.data['lastName']
+        user_data['last_name'] = request.data['lastName']
+        user_data['state'] = request.data['state']
+        user_data['password'] = request.data['password']
+        user_data['password2'] = request.data['password2']
+        user_data['username'] = request.data['username']
+        user_data['nin'] = request.data['nin']
         serializer = RegisterSerializer(data=user_data)
         if serializer.is_valid():
             account = serializer.save()
             account.is_active = True
-            account.is_verified = True
             account.save()
             token = Token.objects.get_or_create(user=account)
             data["message"] = "user registered successfully"
@@ -70,7 +70,8 @@ def checkout(request):
             data['first_name'] = account.first_name
             data['last_name'] = account.last_name
             data['state'] = account.state
-            
+            data['nin'] = account.nin
+
             try:
                 total = 0
                 for i in request.data['products']:
