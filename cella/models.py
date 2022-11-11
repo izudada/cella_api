@@ -55,7 +55,7 @@ class Order(models.Model):
 
 class Item(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    title = models.CharField(default="scotch", max_length=50)
+    title = models.CharField(default="scotch", max_length=200)
     image = models.ImageField()
     quantity = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -17,6 +17,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Brand, Product, Order, Item
 from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
 
 
 
@@ -47,63 +48,68 @@ def checkout(request):
     try:
         data = {}
         user_data = {}
-        print(request.data['firstName'])
-        print(request.data['lastName'])
         user_data['email'] = request.data['email']
-        user_data['first_name'] = request.data['lastName']
+        user_data['first_name'] = request.data['firstName']
         user_data['last_name'] = request.data['lastName']
         user_data['state'] = request.data['state']
         user_data['password'] = request.data['password']
         user_data['password2'] = request.data['password2']
         user_data['username'] = request.data['username']
         user_data['nin'] = request.data['nin']
-        serializer = RegisterSerializer(data=user_data)
-        if serializer.is_valid():
-            account = serializer.save()
-            account.is_active = True
-            account.save()
-            token = Token.objects.get_or_create(user=account)
-            data["message"] = "user registered successfully"
-            data["email"] = account.email
-            data["username"] = account.username
-            data["token"] = token[0].key
-            data['first_name'] = account.first_name
-            data['last_name'] = account.last_name
-            data['state'] = account.state
-            data['nin'] = account.nin
+        
+        try:
+            account = User.objects.get(email=request.data['email'])
+        except User.DoesNotExist:
+            serializer = RegisterSerializer(data=user_data)
 
-            try:
-                total = 0
-                for i in request.data['products']:
-                    total += i['price'] * i['quantity']
-                    
-                new_order = Order.objects.create(
-                    user=account, 
-                    ref= request.data['reference'],
-                    total= total
+            if serializer.is_valid():
+                account = serializer.save()
+                account.is_active = True
+                account.save()
+            else:
+                data = serializer.errors
+
+        token = Token.objects.get_or_create(user=account)
+        data["message"] = "user registered successfully"
+        data["email"] = account.email
+        data["username"] = account.username
+        data["token"] = token[0].key
+        data['first_name'] = account.first_name
+        data['last_name'] = account.last_name
+        data['state'] = account.state
+        data['nin'] = account.nin
+
+        try:
+            total = 0
+            for i in request.data['products']:
+                total += i['price'] * i['quantity']
+                
+            new_order = Order.objects.create(
+                user=account, 
+                ref= request.data['reference'],
+                total= total
+            )
+            new_order.save()
+        except Exception as e:
+            print(e)
+            message = {"message": "issue creating order for checkout"}
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
+
+        try:
+            for i in request.data['products']:
+                new_item = Item.objects.create(
+                    order=new_order,
+                    title = i['title'],
+                    image = i['image'],
+                    quantity = i['quantity']
                 )
-                new_order.save()
-            except Exception as e:
-                print(e)
-                message = {"message": "issue creating order for checkout"}
-                return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
+                new_item.save()
+        except Exception as e:
+            print(e)
+            message = {"message": "issue creating items for checkout"}
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
 
-            try:
-                for i in request.data['products']:
-                    new_item = Item.objects.create(
-                        order=new_order,
-                        title = i['title'],
-                        image = i['image'],
-                        quantity = i['quantity']
-                    )
-                    new_item.save()
-            except Exception as e:
-                print(e)
-                message = {"message": "issue creating items for checkout"}
-                return Response(status=status.HTTP_400_BAD_REQUEST, data=message)
 
-        else:
-            data = serializer.errors
    
         return Response(data)
     except Exception as e:
