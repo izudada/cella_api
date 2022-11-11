@@ -56,21 +56,24 @@ def checkout(request):
         user_data['password2'] = request.data['password2']
         user_data['username'] = request.data['username']
         user_data['nin'] = request.data['nin']
-        
+        message = ""
         try:
             account = User.objects.get(email=request.data['email'])
+            message = "Checout created succesfuly"
         except User.DoesNotExist:
+            message = "user registered successfully"
             serializer = RegisterSerializer(data=user_data)
 
             if serializer.is_valid():
                 account = serializer.save()
                 account.is_active = True
                 account.save()
+            
             else:
                 data = serializer.errors
 
         token = Token.objects.get_or_create(user=account)
-        data["message"] = "user registered successfully"
+        data["message"] = message
         data["email"] = account.email
         data["username"] = account.username
         data["token"] = token[0].key
