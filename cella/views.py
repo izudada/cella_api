@@ -324,3 +324,32 @@ def product_update_view(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+@api_view(['DELETE',])
+@permission_classes((IsAuthenticated,))
+def product_delete_view(request):
+    """
+        An endpoint to delete a product
+
+        variables:
+                - product = stores the item gotten through url id parameter
+                - data = a dictionary that stores response
+                - action = for deleting an item
+    """
+
+    #   Check if item id exists using try block
+    try:
+        uuid = request.data["uuid"]
+        product = Product.objects.get(uuid=uuid)
+    except Product.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    action = product.delete()
+    data = {}
+
+    #   Check if action was sucessful or not
+    if action:
+        data["success"] = "delete successful"
+    else:
+        data["failure"] = "delete failed"
+    return Response(data=data)
