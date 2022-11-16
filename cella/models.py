@@ -67,6 +67,7 @@ class Item(models.Model):
 
 class Brand(models.Model):
     name = models.CharField(default="scotch", max_length=50)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(blank=True, null=True)  
 

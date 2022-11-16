@@ -181,3 +181,5 @@ class ProductApiListView(generics.ListAPIView):
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('brand__name', 'name', 'description', 'price',)
+
+
