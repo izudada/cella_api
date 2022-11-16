@@ -1,4 +1,9 @@
-# Backend - Trivia API
+# Cella API
+
+This is an API supporting the frontend of [Cella App](https://cella.vercel.app/) which was for a hackathon organized by [Ingressive](https://ingressive.org/)
+
+## Hackathon Image Preview
+![Hackathon Image](hackathong_image.jpeg)
 
 ## Setting up the BackenProject
 
