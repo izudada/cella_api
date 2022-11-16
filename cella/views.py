@@ -240,6 +240,9 @@ def brand_delete_view(request):
         An endpoint to delete a brand
 
         variables:
+            - uuid = uuid of the brand
+            - brand = Brand object 
+            - data = dictionary to be returned 
     """
 
     #   Check if item id exists using try block
@@ -258,3 +261,25 @@ def brand_delete_view(request):
     else:
         data["failure"] = "delete failed"
     return Response(data=data)
+
+
+@api_view(['POST',])
+@permission_classes((IsAuthenticated,))
+def product_create_view(request):
+    """
+        An endpoint to create a brand
+
+        variables:
+            - serializer = serialize request data
+    """
+
+    serializer = ProductSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save(request.data['brand'])
+        brand = Brand.objects.get(uuid=request.data['brand'])
+        data = serializer.data
+        data['brand'] = brand.name
+        print(data)
+        return Response(data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
