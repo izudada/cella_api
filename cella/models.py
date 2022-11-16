@@ -74,6 +74,9 @@ class Brand(models.Model):
     def __str__(self):
         return self.name
 
+    def get_products(self):
+        return list(self.product_set.all())
+
 
 class Product(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

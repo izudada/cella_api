@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -7,7 +7,6 @@ from rest_framework.authentication import TokenAuthentication
 from .serializers import RegisterSerializer, UserSerializer, BrandSerializer, ProductSerializer
 from .verify import verify_id
 import json
-import uuid as my_uuid
 from django.contrib.auth import get_user_model
 
 from django.contrib.auth import login
@@ -17,7 +16,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Brand, Product, Order, Item
 from rest_framework.authtoken.models import Token
-from django.shortcuts import get_object_or_404
 
 
 
@@ -266,6 +264,33 @@ def brand_delete_view(request):
     return Response(data=data)
 
 
+@api_view(['GET',])
+@permission_classes((AllowAny,))
+def brand_detail_view(request, uuid):
+    """
+        An endpoint to get the detail of a brand and its products
+
+        variables:
+                - brand = stores the brand object
+                - serializer = stores the serialized data
+    """
+    data = {}
+    #   Check if item id exists using try block
+    try:
+        brand = Brand.objects.get(uuid=uuid)
+    except Product.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    products = brand.get_products()
+
+    product_serializer = ProductSerializer(products, many =True)
+    print(brand.get_products())
+    data['products'] = product_serializer.data
+    brand_serializer = BrandSerializer(brand)
+    data['brand'] = brand_serializer.data
+    return Response(data, status=status.HTTP_201_CREATED)
+
+
 @api_view(['POST',])
 @permission_classes((IsAuthenticated,))
 def product_create_view(request):
@@ -360,7 +385,7 @@ def product_delete_view(request):
 @permission_classes((AllowAny,))
 def product_detail_view(request, uuid):
     """
-        An endpoint to get the detail of a menu item
+        An endpoint to get the detail of a brand
 
         variables:
                 - product = stores the product object
