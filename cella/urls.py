@@ -11,5 +11,7 @@ urlpatterns = [
 
     path('brands/all', views.BrandApiListView.as_view(), name="brands"),
     path('brands', views.brand_create_view, name="brands"),
-    path('products', views.ProductApiListView.as_view(), name="products"),
+    path('brands/edit', views.brand_update_view, name="edit_brand"),
+    path('brands/delete', views.brand_delete_view, name="delete_brand"),
+    path('products/all', views.ProductApiListView.as_view(), name="products"),
 ]

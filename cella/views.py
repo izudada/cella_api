@@ -199,3 +199,62 @@ def brand_create_view(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT',])
+@permission_classes((IsAuthenticated,))
+def brand_update_view(request):
+    """
+        An endpoint to update a brand
+
+        variables:
+                - brand = stores the uuid of the brand
+                - serializer = stores the serialized data
+                - data = a dictionary that stores response
+    """
+
+    #   Check if item id exists using try block
+    try:
+        uuid = request.data['uuid']
+        brand = Brand.objects.get(uuid=uuid)
+    except Brand.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    #   Save and return serialized data
+    serializer = BrandSerializer(brand, data=request.data)
+    data = {}
+
+    #   Serializer checks if data sent is valid
+    if serializer.is_valid():
+        serializer.save()
+        data["success"] = "update successful"
+        return Response(data=data)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE',])
+@permission_classes((IsAuthenticated,))
+def brand_delete_view(request):
+    """
+        An endpoint to delete a brand
+
+        variables:
+    """
+
+    #   Check if item id exists using try block
+    try:
+        uuid = request.data['uuid']
+        brand = Brand.objects.get(uuid=uuid)
+    except Brand.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    action = brand.delete()
+    data = {}
+
+    #   Check if action was sucessful or not
+    if action:
+        data["success"] = "delete successful"
+    else:
+        data["failure"] = "delete failed"
+    return Response(data=data)

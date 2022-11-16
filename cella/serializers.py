@@ -57,7 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
-        fields = ['name', 'created_at']
+        fields = ['name', 'uuid', 'created_at']
 
     
 class ProductSerializer(serializers.ModelSerializer):
