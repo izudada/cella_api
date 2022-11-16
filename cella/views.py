@@ -35,8 +35,11 @@ def verify_user(request):
     user_data = verify_id(str(nin))
     print(user_data)
     if user_data["transactionStatus"] == "SUCCESSFUL":
-        result = json.dumps(user_data["response"])
-        return Response(result)
+        if len(user_data["response"]) > 1:
+            result = json.dumps(user_data["response"])
+            return Response(result)
+        else:
+            return Response(user_data)
     message = {"message": user_data["description"]}
     return Response(status=status.HTTP_404_NOT_FOUND, data=message)
 
@@ -271,6 +274,7 @@ def product_create_view(request):
 
         variables:
             - serializer = serialize request data
+            - brand = brand which product belongs to
             - data = dictionary to be returned
     """
 
@@ -279,9 +283,44 @@ def product_create_view(request):
     if serializer.is_valid():
         serializer.save(brand=brand, in_stock=request.data['total'])
         data = serializer.data
-        print(serializer.data)
         data['brand'] = brand.name
         return Response(data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['PUT',])
+@permission_classes((IsAuthenticated,))
+def product_update_view(request):
+    """
+        An endpoint to update a product
+
+        variables:
+                - product = stores the product object
+                - serializer = stores the serialized data
+                - data = a dictionary that stores response
+    """
+
+    #   Check if item id exists using try block
+    try:
+        uuid = request.data['uuid']
+        product = Product.objects.get(uuid=uuid)
+    except Product.DoesNotExist:
+        return Response(data={"message": "Product doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    #   Save and return serialized data
+    serializer = ProductSerializer(product, data=request.data)
+    data = {}
+    print("Bug````````````````")
+
+    #   Serializer checks if data sent is valid
+    if serializer.is_valid():
+        if request.data['total']:
+            stock = request.data['total'] - product.sold
+            serializer.save(in_stock=stock)
+        serializer.save()
+        data = serializer.data
+        data["message"] = "update successful"
+        return Response(data=data)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

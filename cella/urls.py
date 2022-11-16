@@ -18,4 +18,5 @@ urlpatterns = [
     #Products
     path('products/all', views.ProductApiListView.as_view(), name="products"),
     path('products', views.product_create_view, name="create_product"),
+    path('products/edit', views.product_update_view, name="edit_product"),
 ]
