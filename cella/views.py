@@ -271,15 +271,17 @@ def product_create_view(request):
 
         variables:
             - serializer = serialize request data
+            - data = dictionary to be returned
     """
 
     serializer = ProductSerializer(data=request.data)
-
+    brand = Brand.objects.get(uuid=request.data['brand'])
     if serializer.is_valid():
-        serializer.save(request.data['brand'])
-        brand = Brand.objects.get(uuid=request.data['brand'])
+        serializer.save(brand=brand, in_stock=request.data['total'])
         data = serializer.data
+        print(serializer.data)
         data['brand'] = brand.name
-        print(data)
         return Response(data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

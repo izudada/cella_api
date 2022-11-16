@@ -63,21 +63,6 @@ class BrandSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'sold', 'in_stock', 'total', 'created_at']
+        fields = [ 'uuid', 'name', 'description', 'price', 'sold', 'in_stock', 'total', 'created_at']
 
-    def save(self, uuid):
-        """
-            A method overiding DRF serializer's save method
-        """
-        brand = Brand.objects.get(uuid=uuid)
-        product = Product(
-            brand = brand,
-            name = self.validated_data['name'],
-            description = self.validated_data['description'],
-            price = self.validated_data['price'],
-            in_stock = self.validated_data['total'],
-            total = self.validated_data['total']
-        )
 
-        product.save()
-        return product
