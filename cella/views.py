@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication
 from .serializers import RegisterSerializer, UserSerializer, BrandSerializer, ProductSerializer
 from .verify import verify_id
 import json
@@ -10,7 +11,6 @@ import uuid as my_uuid
 from django.contrib.auth import get_user_model
 
 from django.contrib.auth import login
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from rest_framework.pagination import PageNumberPagination
@@ -167,8 +167,8 @@ def say_hello(request):
 class BrandApiListView(generics.ListAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
-    # authentication_classes = (AllowAny,)
-    permission_classes = (AllowAny,)
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     pagination_class = PageNumberPagination
 
 
@@ -183,3 +183,19 @@ class ProductApiListView(generics.ListAPIView):
     search_fields = ('brand__name', 'name', 'description', 'price',)
 
 
+@api_view(['POST',])
+@permission_classes((IsAuthenticated,))
+def brand_create_view(request):
+    """
+        An endpoint to create a brand
+
+        variables:
+            - serializer = serialize request data
+    """
+
+    serializer = BrandSerializer(data=request.data)
+    #   Check if serializer is valid
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

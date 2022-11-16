@@ -9,6 +9,7 @@ urlpatterns = [
     path('auth/login', views.login_user, name="login"),
 
 
-    path('brands', views.BrandApiListView.as_view(), name="brands"),
+    path('brands/all', views.BrandApiListView.as_view(), name="brands"),
+    path('brands', views.brand_create_view, name="brands"),
     path('products', views.ProductApiListView.as_view(), name="products"),
 ]
