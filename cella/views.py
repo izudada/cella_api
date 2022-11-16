@@ -332,9 +332,10 @@ def product_delete_view(request):
         An endpoint to delete a product
 
         variables:
-                - product = stores the item gotten through url id parameter
+                - product = stores the product object
                 - data = a dictionary that stores response
                 - action = for deleting an item
+                - uuid = uuid from the request data
     """
 
     #   Check if item id exists using try block
@@ -353,3 +354,25 @@ def product_delete_view(request):
     else:
         data["failure"] = "delete failed"
     return Response(data=data)
+
+
+@api_view(['GET',])
+@permission_classes((AllowAny,))
+def product_detail_view(request, uuid):
+    """
+        An endpoint to get the detail of a menu item
+
+        variables:
+                - product = stores the product object
+                - serializer = stores the serialized data
+    """
+
+    #   Check if item id exists using try block
+    try:
+        product = Product.objects.get(uuid=uuid)
+    except Product.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    #   Save and return serialized data
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)
