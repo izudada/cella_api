@@ -289,7 +289,7 @@ def brand_detail_view(request, uuid):
     data = {}
     #   Check if item id exists using try block
     try:
-        brand = Brand.get_object_or_404(uuid=uuid)
+        brand = Brand.objects.get(uuid=uuid)
     except Brand.DoesNotExist:
         return Response({"message": "Brand does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
