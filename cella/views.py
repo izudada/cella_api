@@ -44,7 +44,7 @@ def verify_user(request):
     nin = request.data['nin']
     print(nin, type(nin))
     user_data = verify_id(str(nin))
-    # print(user_data)
+    print(user_data)
     if user_data["transactionStatus"] == "SUCCESSFUL":
         if len(user_data["response"]) > 1:
             result = json.dumps(user_data["response"])
