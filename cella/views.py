@@ -148,9 +148,8 @@ def login_user(request):
             raise ValidationError({"400": f'{str(e)}'})
 
         token = Token.objects.get_or_create(user=Account)[0].key
-        print(token)
         if not check_password(password, Account.password):
-            raise ValidationError({"message": "Incorrect Login credentials"})
+            raise Response({"message": "Incorrect Login credentials"}, status=status.HTTP_404_NOT_FOUND)
 
         if Account:
             if Account.is_active:
