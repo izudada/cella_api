@@ -12,7 +12,10 @@ urlpatterns = [
 
     #   Password change
     path('auth/change-password', views.ChangePasswordView.as_view(), name='change-password'),
-   
+    path('auth/password_reset', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('auth/password_reset/confirm/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path('auth/password_reset/validate_token/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+
     #   Brands
     path('brands/all', views.BrandApiListView.as_view(), name="brands"),
     path('brands', views.brand_create_view, name="brands"),
