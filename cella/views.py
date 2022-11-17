@@ -42,7 +42,7 @@ except ImportError:
 @permission_classes([])
 def verify_user(request):
     nin = request.data['nin']
-    print(nin)
+    print(nin, type(nin))
     user_data = verify_id(str(nin))
     # print(user_data)
     if user_data["transactionStatus"] == "SUCCESSFUL":
