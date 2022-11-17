@@ -28,4 +28,6 @@ urlpatterns = [
     path('products/delete', views.product_delete_view, name="delete_product"),
     path('products/<str:uuid>', views.product_detail_view, name="product"),
 
+    path('orders/<str:ref>', views.order_detail_view, name="view_order"),
+
 ]

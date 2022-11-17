@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django_countries.serializer_fields import CountryField
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
-from .models import Brand, Product
+from .models import Brand, Product, Order, Item
 
 
 try:
@@ -74,3 +74,15 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [ 'user', 'ref', 'total', 'created_at']
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = [ 'order', 'title', 'image', 'quantity', 'created_at']

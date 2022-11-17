@@ -71,6 +71,9 @@ class Order(models.Model):
     def __str__(self):
         return self.ref
 
+    def get_items(self):
+        return list(self.item_set.all())
+
 
 class Item(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

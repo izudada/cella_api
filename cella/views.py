@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
-from .serializers import RegisterSerializer, UserSerializer, BrandSerializer, ProductSerializer, ChangePasswordSerializer
+from .serializers import RegisterSerializer, UserSerializer, BrandSerializer, ProductSerializer, ChangePasswordSerializer, ItemSerializer, OrderSerializer
 from .verify import verify_id
 import json
 from django.contrib.auth import get_user_model
@@ -449,3 +449,27 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def order_detail_view(request, ref):
+    """
+        An endpoint to get the detail of an order
+
+        variables:
+                - 
+    """
+    data = {}
+    #   Check if item id exists using try block
+    try:
+        order = Order.objects.get(ref=ref)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    items = order.get_items()
+
+    item_serializer = ItemSerializer(items, many =True)
+    print(order.get_items())
+    data['items'] = item_serializer.data
+    order_serializer = OrderSerializer(order)
+    data['order'] = order_serializer.data
+    return Response(data, status=status.HTTP_201_CREATED)
