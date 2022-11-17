@@ -149,7 +149,7 @@ def login_user(request):
 
         token = Token.objects.get_or_create(user=Account)[0].key
         if not check_password(password, Account.password):
-            raise Response({"message": "Incorrect Login credentials"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Incorrect Login credentials"}, status=status.HTTP_404_NOT_FOUND)
 
         if Account:
             if Account.is_active:
