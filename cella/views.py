@@ -16,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Brand, Product, Order, Item
 from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
 
 
 
@@ -288,8 +289,8 @@ def brand_detail_view(request, uuid):
     data = {}
     #   Check if item id exists using try block
     try:
-        brand = Brand.objects.get(uuid=uuid)
-    except Product.DoesNotExist:
+        brand = Brand.get_object_or_404(uuid=uuid)
+    except Brand.DoesNotExist:
         return Response({"message": "Brand does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     products = brand.get_products()
