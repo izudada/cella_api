@@ -290,7 +290,7 @@ def brand_detail_view(request, uuid):
     try:
         brand = Brand.objects.get(uuid=uuid)
     except Product.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Brand does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     products = brand.get_products()
 
