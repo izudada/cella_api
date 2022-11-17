@@ -9,6 +9,10 @@ urlpatterns = [
     path('auth/checkout', views.checkout, name="checkout"),
     path('auth/login', views.login_user, name="login"),
 
+
+    #   Password change
+    path('auth/change-password', views.ChangePasswordView.as_view(), name='change-password'),
+
     #   Brands
     path('brands/all', views.BrandApiListView.as_view(), name="brands"),
     path('brands', views.brand_create_view, name="brands"),
@@ -22,4 +26,5 @@ urlpatterns = [
     path('products/edit', views.product_update_view, name="edit_product"),
     path('products/delete', views.product_delete_view, name="delete_product"),
     path('products/<str:uuid>', views.product_detail_view, name="product"),
+
 ]

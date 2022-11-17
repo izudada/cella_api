@@ -66,3 +66,11 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [ 'uuid', 'name', 'description', 'price', 'sold', 'in_stock', 'total', 'created_at']
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+        Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
