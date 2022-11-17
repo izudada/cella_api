@@ -52,7 +52,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 
     send_mail(
         # title:
-        "Password Reset for {title}".format(title="Some website title"),
+        "Password Reset",
         # message:
         email_plaintext_message,
         # from:
