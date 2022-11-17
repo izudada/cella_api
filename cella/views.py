@@ -59,40 +59,41 @@ def verify_user(request):
 def checkout(request):
     try:
         data = {}
-        user_data = {}
-        user_data['email'] = request.data['email']
-        user_data['first_name'] = request.data['firstName']
-        user_data['last_name'] = request.data['lastName']
-        user_data['state'] = request.data['state']
-        user_data['password'] = request.data['password']
-        user_data['password2'] = request.data['password2']
-        user_data['username'] = request.data['username']
-        user_data['nin'] = request.data['nin']
-        message = ""
-        try:
-            account = User.objects.get(email=request.data['email'])
-            message = "Checout created succesfuly"
-        except User.DoesNotExist:
-            message = "user registered successfully"
-            serializer = RegisterSerializer(data=user_data)
+        if request.data['firstName'] or request.data['email']:
+            user_data = {}
+            user_data['email'] = request.data['email']
+            user_data['first_name'] = request.data['firstName']
+            user_data['last_name'] = request.data['lastName']
+            user_data['state'] = request.data['state']
+            user_data['password'] = request.data['password']
+            user_data['password2'] = request.data['password2']
+            user_data['username'] = request.data['username']
+            user_data['nin'] = request.data['nin']
+            message = ""
+            try:
+                account = User.objects.get(email=request.data['email'])
+                message = "Checout created succesfuly"
+            except User.DoesNotExist:
+                message = "user registered successfully"
+                serializer = RegisterSerializer(data=user_data)
 
-            if serializer.is_valid():
-                account = serializer.save()
-                account.is_active = True
-                account.save()
-            
-            else:
-                data = serializer.errors
+                if serializer.is_valid():
+                    account = serializer.save()
+                    account.is_active = True
+                    account.save()
+                
+                else:
+                    data = serializer.errors
 
-        token = Token.objects.get_or_create(user=account)
-        data["message"] = message
-        data["email"] = account.email
-        data["username"] = account.username
-        data["token"] = token[0].key
-        data['first_name'] = account.first_name
-        data['last_name'] = account.last_name
-        data['state'] = account.state
-        data['nin'] = account.nin
+            token = Token.objects.get_or_create(user=account)
+            data["message"] = message
+            data["email"] = account.email
+            data["username"] = account.username
+            data["token"] = token[0].key
+            data['first_name'] = account.first_name
+            data['last_name'] = account.last_name
+            data['state'] = account.state
+            data['nin'] = account.nin
 
         try:
             total = 0
