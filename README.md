@@ -1,9 +1,9 @@
 # Cella API
 
-This is an API supporting the frontend of [Cella App](https://cella.vercel.app/) which was for a hackathon organized by [Ingressive](https://ingressive.org/)
+This is an API supporting the frontend of [Cella App](https://cella.vercel.app/) which is for a [hackathon](https://www.seerbit.com/hackathon) organized by [Seerbit](https://www.seerbit.com)
 
 ## Hackathon Image Preview
-![Hackathon Image](hackathong_image.jpeg)
+![Hackathon Image](hackathon_image.png)
 
 ## Setting up the BackenProject
 
